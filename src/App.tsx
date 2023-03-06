@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import PaginaBaseAdmin from './paginas/Administracao/PaginaBaseAdmin';
+import AdministracaoPratos from './paginas/Administracao/Pratos/AdministracaoPratos';
+import FormularioPratos from './paginas/Administracao/Pratos/FormularioPratos';
+import AdministracaoRestaurantes from './paginas/Administracao/Restaurantes/AdministracaoRestaurantes';
+import FormularioRestaurante from './paginas/Administracao/Restaurantes/FormularioRestaurantes';
+import Home from './paginas/Home';
+import VitrineRestaurantes from './paginas/VitrineRestaurantes';
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/restaurantes" element={<VitrineRestaurantes />} />
+
+      <Route path='/admin' element={<PaginaBaseAdmin />}>
+        <Route path="restaurantes" element={<AdministracaoRestaurantes />} />
+        <Route path="restaurantes/novo" element={<FormularioRestaurante />} />
+        <Route path="restaurantes/:id" element={<FormularioRestaurante />} />
+        <Route path="pratos" element={<AdministracaoPratos />} />
+        <Route path="pratos/novo" element={<FormularioPratos />} />
+      </Route>
+
+
+    </Routes>
   );
 }
 

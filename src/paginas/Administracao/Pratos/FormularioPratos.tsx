@@ -1,11 +1,31 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import http from "../../../http";
+import IPrato from "../../../interfaces/IPrato";
 import IRestaurante from "../../../interfaces/IRestaurante";
 import ITag from "../../../interfaces/ITag";
 
 
 const FormularioPratos = () => {
+
+    const parametros = useParams();
+
+    useEffect(() => {
+        if (parametros.id) {
+            http.get<IPrato>(`pratos/${parametros.id}/`)
+                .then(response => {
+                    setNomePrato(response.data.nome);
+                    setDescricao(response.data.descricao);
+                    setTag(response.data.tag);
+                    setRestaurante(String(response.data.restaurante));
+                })
+                .catch(ex => {
+                    console.log(ex);
+                });
+        }
+
+    }, [parametros]);
 
     const [nomePrato, setNomePrato] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -31,24 +51,37 @@ const FormularioPratos = () => {
             formData.append('imagem', imagem);
         }
 
+        let url = 'pratos/';
+        let method = 'POST';
+        let mensagem = 'Prato cadastrado com sucesso!';
+        if (parametros.id) {
+            url = `pratos/${parametros.id}/`;
+            method = 'PUT';
+            mensagem = 'Prato alterado com sucesso!';
+        }
+
         http.request({
-            url: 'pratos/',
-            method: 'POST',
+            url: url,
+            method: method,
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
             data: formData
         }).then(resposta => {
-            setNomePrato('');
-            setDescricao('');
-            setTag('');
-            setRestaurante('');
-            setImagem(null);
-            alert('Prato cadastrado com sucesso!');
+            limpaFormulario();
+            alert(mensagem);
         })
-        .catch(erro => console.log(erro));
+            .catch(erro => console.log(erro));
 
     }
+
+    const limpaFormulario = () => {
+        setNomePrato('');
+        setDescricao('');
+        setTag('');
+        setRestaurante('');
+        setImagem(null);
+    };
 
     const selecionarArquivo = (evento: React.ChangeEvent<HTMLInputElement>) => {
         if (evento.target.files?.length) {
@@ -59,15 +92,15 @@ const FormularioPratos = () => {
     }
 
     useEffect(() => {
-        http.get< {tags: ITag[]} >('tags/')
-        .then(response => {
-            setTags(response.data.tags);
-        });
+        http.get<{ tags: ITag[] }>('tags/')
+            .then(response => {
+                setTags(response.data.tags);
+            });
 
         http.get<IRestaurante[]>('restaurantes/')
-        .then(response => {
-            setRestaurantes(response.data);
-        });
+            .then(response => {
+                setRestaurantes(response.data);
+            });
 
     }, []);
 

@@ -11,8 +11,9 @@ const AdministracaoPratos = () => {
     const [restaurantes, setRestaurantes] = useState<IRestaurante[]>([]);
 
     useEffect(() => {
-        Promise.all([http.get<IPrato[]>('pratos/'),
-        http.get<IRestaurante[]>(`restaurantes/`)
+        Promise.all([
+            http.get<IPrato[]>('pratos/'),
+            http.get<IRestaurante[]>(`restaurantes/`)
         ]
         ).then(([pratos, restaurantes]) => {
             setPratos(pratos.data);
